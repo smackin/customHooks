@@ -3,18 +3,21 @@ import uuid from "uuid";
 import axios from "axios";
 import PlayingCard from "./PlayingCard";
 import "./PlayingCardList.css";
-import useAxios from './hooks'
+import { useAxios } from './hooks'
+import { formatCard } from "./helpers";
 
 /* Renders a list of playing cards.
  * Can also add a new card at random. */
 function CardTable() {
-  const data = useAxios("https://deckofcardsapi.com/api/deck/new/draw/"); 
-  if(data.isLoading) {
-    return <div> Please wait, LOADING .....</div>
-  }
-  if(data.error) {
-    return <div>Ooops, something went wrong, please try again. </div>
-  }
+  const [cards, addCard, clearCards] = useAxios(
+    "cards",
+    "https://deckofcardsapi.com/api/deck/new/draw/"); 
+  // if(data.isLoading) {
+  //   return <div> Please wait, LOADING .....</div>
+  // }
+  // if(data.error) {
+  //   return <div>Ooops, something went wrong, please try again. </div>
+  // }
   
   // const [cards, setCards] = useState([]);
   // const addCard = async () => {
@@ -25,16 +28,18 @@ function CardTable() {
 
 
 
-const cardData = data.response
+// const cardData = data.response
+
   return (
     <div className="PlayingCardList">
       <h3>Pick a card, any card!</h3>
       <div>
-        <button onClick={useAxios}>Add a playing card!</button>
+        <button onClick={() => addCard(formatCard)}>Add a playing card!</button>
+        <button onClick={clearCards}>Clear the table. </button>
       </div>
       <div className="PlayingCardList-card-area">
-        {data.map(cardData => (
-          <PlayingCard key={cardData.id} front={cardData.cards[0].image} />
+        {cards.map(card => (
+          <PlayingCard key={card.id} front={card.image} />
         ))}
       </div>
     </div>
